@@ -6,14 +6,18 @@ router.route("/")
     .get(booksController.findAll)
     .post(booksController.create);
 
+router.route('/:id')
+    .delete(booksController.remove);
 
-router.route("/searchbooks", (req, res) => {
+router.get("/searchbooks", (req, res) => {
+    
     var title = "The+Hunger+Games";
-    var bookurl = `https://www.googleapis.com/books/v1/volumes?q=title:The+Hunger+Games`;
-    axios
-    .get(bookurl)
-    .then(({ data: { results } }) => res.json(results))
-    .catch(err => res.status(422).json(err));
+    var bookurl = `https://www.googleapis.com/books/v1/volumes?q=title:${title}`;
+    axios.get(bookurl, { params: { q: req.query } })
+        .then(response => {
+            res.json(response.data);
+        })
+        .catch(err => res.json(err.message));
 });
 
 module.exports = router;
